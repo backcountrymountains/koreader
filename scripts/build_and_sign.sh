@@ -55,6 +55,8 @@ cp "$KOREADER_DIR/frontend/ui/network/manager.lua" \
 rm -f "$ARCHIVE"
 (cd "$PATCH_TMP" && 7z a -t7z -m0=lzma2 -mx=9 "$ARCHIVE" . > /dev/null)
 rm -rf "$PATCH_TMP"
+# Remove any leftover backup that would otherwise get bundled into the APK
+rm -f "${ARCHIVE}.bak"
 echo "  → device.lua, powerd.lua, manager.lua patched"
 
 # ── 2. Gradle build ───────────────────────────────────────────────────────────
