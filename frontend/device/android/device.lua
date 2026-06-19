@@ -137,11 +137,7 @@ end
 
 function Device:init()
     self.screen = require("ffi/framebuffer_android"):new{device = self, debug = logger.dbg}
-    self.powerd = require("device/android/powerd"):new{
-        device = self,
-        -- GL4 Plus sysfs warmth node resets on every app start/resume
-        volatile_warmth = android.prop.model == "bnrv1300",
-    }
+    self.powerd = require("device/android/powerd"):new{device = self}
 
     local event_map = dofile("frontend/device/android/event_map.lua")
 
@@ -181,12 +177,6 @@ function Device:init()
             elseif ev.code == C.APP_CMD_RESUME then
                 if not android.prop.brokenLifecycle then
                     UIManager:broadcastEvent(Event:new("Resume"))
-                end
-                if this.device:hasNaturalLight() and this.device.powerd.volatile_warmth then
-                    local powerd = this.device.powerd
-                    if powerd.fl_warmth and powerd.fl_warmth > 0 then
-                        android.setScreenWarmth(powerd:toNativeWarmth(powerd.fl_warmth))
-                    end
                 end
                 if external.when_back_callback then
                     external.when_back_callback()
